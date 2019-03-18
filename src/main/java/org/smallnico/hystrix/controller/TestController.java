@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
-public class UserController {
+public class TestController {
 
     @GetMapping("/seconds/{value}")
     public String seconds(@PathVariable int value) throws InterruptedException {

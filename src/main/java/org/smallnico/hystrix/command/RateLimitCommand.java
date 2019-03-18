@@ -4,6 +4,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
+import com.netflix.hystrix.HystrixThreadPoolKey;
 
 public class RateLimitCommand extends HystrixCommand<Object>{
 
@@ -12,8 +13,10 @@ public class RateLimitCommand extends HystrixCommand<Object>{
     private ProceedingJoinPoint point;
     
     public RateLimitCommand(String uri, ProceedingJoinPoint point) {
-        super(HystrixCommandGroupKey.Factory.asKey(uri));
+        super(HystrixCommandGroupKey.Factory.asKey(uri), HystrixThreadPoolKey.Factory.asKey(uri), 5 * 1000);
+        
         this.uri = uri;
+        this.point = point;
     }
 
     @Override
@@ -23,6 +26,11 @@ public class RateLimitCommand extends HystrixCommand<Object>{
         } catch (Throwable e) {
             throw new Exception("Rate limit command happened exception." ,e);
         }
+    }
+
+    @Override
+    protected Object getFallback() {
+        return "error";
     }
 
     public String getUri() {

@@ -1,6 +1,8 @@
 package org.smallnico.hystrix.aop;
 
 
+import java.util.concurrent.Future;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -10,8 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.smallnico.hystrix.command.RateLimitCommand;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-import rx.Observable;
 
 
 
@@ -26,14 +26,14 @@ public class RateLimitAop {
 	public void point(){}
 	
 	@Around(value="point()")
-	public Object aroundMethod(ProceedingJoinPoint point){
+	public Object aroundMethod(final ProceedingJoinPoint point){
 		try {
-		    Observable<Object> result = new RateLimitCommand(point.getKind(), point).observe();
-		    
+		    Future<Object> obj = new RateLimitCommand("abc", point).queue();
 		    LOGGER.info("Before executing !!");
-            return point.proceed();
+            return obj.get();
         } catch (Throwable e) {
-            return null;
+            e.printStackTrace();
+            return e.getMessage();
         }
 	}
 
