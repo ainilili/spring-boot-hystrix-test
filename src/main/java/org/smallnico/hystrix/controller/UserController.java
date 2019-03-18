@@ -1,4 +1,4 @@
-package org.smallnico.jacoco.controller;
+package org.smallnico.hystrix.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -6,12 +6,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api")
 public class UserController {
 
-    @GetMapping("/{id}")
-    public String get(@PathVariable String id) {
-        return "{\"id\":\"" + id + "\"}";
+    @GetMapping("/seconds/{value}")
+    public String seconds(@PathVariable int value) throws InterruptedException {
+        Thread.sleep(value * 1000l);
+        return "success";
     }
     
 }
